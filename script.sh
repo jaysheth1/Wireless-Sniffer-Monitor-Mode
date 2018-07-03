@@ -2,29 +2,6 @@
 #!/bin/bash
 
 
-
-#./script.sh one two three
-#USAGE : sudo ./script channel capture filter
-
-
-#Positional parameter 1 contains something 00./script.sh 11one 22two
-
-
-
-
-echo "0 $0"
-echo "1 $1"
-echo "2 $2"
-echo "3 $3"
-echo "4 $4"
-echo "5 $5"
-
-
-
-
-
-
-
 echo -e "USAGE : sudo ./script channel capturefilter outputfilename\n\n"
 
 if [ "$1" != "" ]; then
