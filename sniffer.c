@@ -56,7 +56,7 @@ int qosnull = 0;
 
 
 void print_app_usage(char *app_name) {
-	printf("Usage: %s interface [-o output_file] [-t target_bssid]\n", app_name);
+	printf("Usage: %s interface [-o output_file]\n", app_name);
 	printf("\n");
 	return;
 }
@@ -128,7 +128,7 @@ void free_bsslist(struct bsslist *bsl) {
 
 
 void terminate_process(int signum) {
-	printf("\nCapture complete.\n\nOther packets: %d\nBeacon packets: %d \nData packets: %d \nQos data packets: %d \nQos NULL data packets: %d \nCTS packets: %d \nRTS packets: %d \nACK packets: %d \nProbe Req. packets: %d\nProbe Res. packets: %d\nAssociation Req: %d \nAssociation Response: %d \nAuthentication: %d \n\n\n", eapols, beacons, data, qosdata,qosnull, cts, rts, ack, probereq, proberes, areq, ares, auth);
+	printf("\nCapture complete.\n\nOther packets: %d\nBeacon packets: %d \nData packets: %d \nQos data packets: %d \nQos NULL data packets: %d \nNULL packets: %d \nCTS packets: %d \nRTS packets: %d \nACK packets: %d \nProbe Req. packets: %d\nProbe Res. packets: %d\nAssociation Req: %d \nAssociation Response: %d \nAuthentication: %d \n\n\n", eapols, beacons, data, qosdata,qosnull, nullp,cts, rts, ack, probereq, proberes, areq, ares, auth);
 
 	pcap_breakloop(capturehandle);
 	pcap_close(capturehandle);
@@ -183,7 +183,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 
 		if (is_in_list(blist, bssid) ) 
 		{
-			//printf(" * Beacon captured (%02X:%02X:%02X:%02X:%02X:%02X) ", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * Beacon captured (%02X:%02X:%02X:%02X:%02X:%02X) ", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 		}
 		else
 		{
@@ -200,8 +200,8 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
-			//blist = add_to_list(blist, bssid);
+			printf(" * Association Request Captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			//blist\n = add_to_list(blist, bssid);
 			areq += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
 		//}
@@ -210,7 +210,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * Association Respose captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			ares += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -220,7 +220,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * Authentication Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			auth += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -237,7 +237,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			data += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -247,7 +247,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * Probe Request captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			probereq += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -257,7 +257,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * Probe Response captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			proberes += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -267,7 +267,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * Null Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			nullp += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -277,7 +277,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * ACK captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			ack += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -287,7 +287,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * QoS Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			qosdata += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -297,7 +297,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * CTS captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			cts += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -307,7 +307,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * RTS captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			rts += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -317,7 +317,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			data += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -327,7 +327,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	{
 		bssid = packet + offset + 10; //remeber to tally the offset.
 		//if ( !is_in_list(blist, bssid) ) { // not previously stored
-			//printf(" * Data Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+			printf(" * QoS NULL Packet captured (%02X:%02X:%02X:%02X:%02X:%02X)\n", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 			//blist = add_to_list(blist, bssid);
 			qosnull += 1;
 			pcap_dump((u_char *) pcapfile, header, packet);
@@ -340,7 +340,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 		printf("TYPE IN HEX :: %d\n", type);
 
 		bssid = packet + offset + 4;
-		//printf(" * DATA PACKET captured (%02X:%02X:%02X:%02X:%02X:%02X -> %02X:%02X:%02X:%02X:%02X:%02X)\n", 
+		//printf(" * Type: Unknown- packet captured (%02X:%02X:%02X:%02X:%02X:%02X -> %02X:%02X:%02X:%02X:%02X:%02X)\n"), 
 		//			bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5],
 		//			bssid[6], bssid[7], bssid[8], bssid[9], bssid[10], bssid[11] );
 		eapols += 1;
