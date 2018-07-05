@@ -157,7 +157,42 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 			break;
 		case DLT_IEEE802_11_RADIO:
 			rtaphdr = (struct radiotap_header *) packet;
-			offset = rtaphdr->it_len; 
+			offset = rtaphdr->it_len;
+            
+            //----------------------------------------Printing RSSI channel and data radio, basically parsing radiotap header
+            // These are placeholders for offset values:
+            const u_char *bssid; // a place to put our BSSID \ these are bytes
+            const u_char *essid; // a place to put our ESSID / from the packet
+            const u_char *essidLen;
+            const u_char *channel; // the frequency (in Mhz) of the AP Radio
+            const u_char *rssi; // received signal strength
+            const u_char *data_rate; // received signal strength
+            
+            int offset = 0;
+            
+            offset = rtaphdr->it_len; // 26 bytes on my machine
+            
+            bssid = packet + 42;
+            essid = packet + 64;
+            essidLen = packet + 63;
+            rssi = packet + 34;
+            signed int rssiDbm = rssi[0] - 256;
+            data_rate = packet + 25;
+            channel = packet + 26;
+            int channelFreq = channel[1] * 256 + channel[0];
+            char *ssid = malloc(63);
+            unsigned int i = 0;
+            int dataratedec = data_rate[0];
+            ssid[i] = '\0'; // terminate the string
+            fprintf(stdout,"RSSI: %d dBm",rssiDbm);
+            fprintf(stdout,"    AP Frequency: %iMhz",channelFreq);
+            fprintf(stdout,"    Data RAte: %dMhz\n", dataratedec/2);
+            
+
+            
+            
+            
+            //-------------parsing radiotap header end
 			break;
 		default:
 			fprintf(stderr, "Error: Unrecognized data link type: %d\n", pcaptype);
