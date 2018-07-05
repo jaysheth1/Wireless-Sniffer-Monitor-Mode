@@ -161,8 +161,8 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
             
             //----------------------------------------Printing RSSI channel and data radio, basically parsing radiotap header
             // These are placeholders for offset values:
-            const u_char *bssid; // a place to put our BSSID \ these are bytes
-            const u_char *essid; // a place to put our ESSID / from the packet
+            const u_char *bssid; // a place to put our BSSID these are bytes
+            const u_char *essid; // a place to put our ESSID from the packet
             const u_char *essidLen;
             const u_char *channel; // the frequency (in Mhz) of the AP Radio
             const u_char *rssi; // received signal strength
@@ -186,7 +186,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
             ssid[i] = '\0'; // terminate the string
             fprintf(stdout,"RSSI: %d dBm",rssiDbm);
             fprintf(stdout,"    AP Frequency: %iMhz",channelFreq);
-            fprintf(stdout,"    Data RAte: %dMhz\n", dataratedec/2);
+            fprintf(stdout,"    Data RAte: % Mbps\n", dataratedec/2);
             
 
             
